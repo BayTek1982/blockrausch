@@ -65,6 +65,13 @@ button:focus-visible{outline:2px solid var(--akzent2);outline-offset:2px}
 .musik button{display:flex;justify-content:space-between;align-items:baseline;gap:10px;text-align:left;border-radius:12px;border:1px solid var(--kante);background:var(--flaeche);color:var(--text);font:600 15px var(--display);padding:10px 12px}
 .musik button i{font-style:normal;font-weight:400;font-size:12px;color:var(--leise)}
 .musik button[aria-pressed="true"]{border-color:var(--akzent2);background:rgba(94,230,192,.1)}
+#anl{position:fixed;inset:0;z-index:200;background:rgba(8,9,18,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+#anl[hidden]{display:none}
+#anl .k{background:var(--flaeche);border:1px solid var(--kante);border-radius:18px;padding:18px;max-width:430px;width:100%;color:var(--text);max-height:88vh;overflow:auto}
+#anl h2{margin:0 0 6px;font:800 20px var(--display)}#anl h3{margin:14px 0 4px;font-size:15px;color:var(--akzent2)}
+#anl p,#anl li{line-height:1.5;margin:0 0 6px;font-size:15px}#anl ul,#anl ol{margin:0;padding-left:20px}
+#anl .tip{border:1px solid var(--kante);border-radius:10px;padding:8px 10px;margin-top:8px;font-size:14px}
+#anl .ok{display:block;margin:14px 0 0 auto;padding:0 22px}
 </style>
 </head>
 <body>
@@ -72,6 +79,7 @@ button:focus-visible{outline:2px solid var(--akzent2);outline-offset:2px}
   <header>
     <h1>Block<span>rausch</span></h1>
     <div class="kopfknopf">
+      <button class="rund" id="bAnl" type="button" aria-label="Anleitung">📖</button>
       <button class="rund" id="bMusik" type="button" aria-label="Musik wählen">♪</button>
       <button class="rund" id="bPause" type="button" aria-label="Pause">II</button>
     </div>
@@ -100,11 +108,22 @@ button:focus-visible{outline:2px solid var(--akzent2);outline-offset:2px}
     <p class="zahl" id="bZahl"></p>
     <button class="gross" id="bStart" type="button">Spiel starten</button>
     <button class="neben" id="bNeu" type="button">Neu starten</button>
+    <button class="neben" id="bAnl2" type="button">📖 Anleitung</button>
     <div class="musik" id="musik"><small>Musik</small></div>
     <div class="musik" id="steine"><small>Steine</small></div>
     <p id="bHilfe">Tasten unten oder direkt auf dem Feld: tippen dreht, wischen schiebt, nach unten schnippen lässt fallen, nach oben schnippen hält den Stein.</p>
   </div>
 </div>
+<div id="anl" hidden><div class="k">
+  <h2>🧱 So spielst du Blockrausch</h2>
+  <h3>Ziel</h3><p>Von oben fallen Steine. Schiebe und drehe sie so, dass <b>volle waagrechte Reihen</b> entstehen – die verschwinden und bringen Punkte. Stapeln sich die Steine bis ganz oben, ist das Spiel vorbei.</p>
+  <h3>Tasten unten</h3><ul><li><b>◀ ▶</b> nach links / rechts schieben (gedrückt halten = weiter schieben)</li><li><b>▼</b> schneller fallen</li><li><b>⤓</b> sofort ganz nach unten fallen lassen</li><li><b>⟳</b> drehen</li></ul>
+  <h3>Direkt auf dem Spielfeld</h3><ul><li><b>Tippen</b> = drehen</li><li><b>Wischen</b> links/rechts = schieben</li><li><b>Nach unten schnippen</b> = fallen lassen</li><li><b>Nach oben schnippen</b> = Stein „halten“ (für später aufheben – oben links im Kästchen „Halten“)</li></ul>
+  <h3>Punkte &amp; Level</h3><p>Je mehr Reihen du auf einmal schaffst, desto mehr Punkte gibt es. Alle zehn Reihen steigt das Level – dann fallen die Steine schneller. Oben rechts siehst du, welcher Stein als Nächstes kommt.</p>
+  <h3>Am Computer</h3><p>Pfeiltasten schieben/drehen, Leertaste = fallen lassen, C = halten, P = Pause.</p>
+  <div class="tip">💡 Tipp: Lass am Rand eine Spalte frei – dann kannst du mit dem langen Stein gleich vier Reihen auf einmal abräumen.</div>
+  <button class="gross ok" id="anlOk" type="button">Los geht's!</button>
+</div></div>
 <script>
 (function(){
 "use strict";
@@ -387,6 +406,12 @@ neu();state='menu';resize();waehleStumm();blende();requestAnimationFrame(loop);
 function waehleStumm(){ mBtns.forEach((b,j)=>b.setAttribute('aria-pressed',(j===mIdx||(mIdx<0&&j===TR.length))?'true':'false')); }
 window.__spiel={hard:hard,move:move,get state(){return state;},get score(){return score;}};
 })();
+</script>
+<script>
+(function(){const a=document.getElementById('anl'),show=()=>{const st=document.getElementById('blende');if(st&&st.hidden){const p=document.getElementById('bPause');p&&p.click();}a.hidden=false;};
+document.getElementById('bAnl').addEventListener('click',show);document.getElementById('bAnl2').addEventListener('click',show);
+document.getElementById('anlOk').addEventListener('click',()=>{a.hidden=true;});a.addEventListener('click',e=>{if(e.target===a)a.hidden=true;});
+try{if(!localStorage.getItem('blockrausch-anleitung')){localStorage.setItem('blockrausch-anleitung','1');a.hidden=false;}}catch(e){}})();
 </script>
 </body>
 </html>
